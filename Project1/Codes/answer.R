@@ -1,6 +1,5 @@
 library(randomForestSRC)
 # library(randomForest)
-library(grnn)
 network_database <- read.csv(file = "network_backup_dataset.csv", header = TRUE, sep = ",")
 network_database[[8]] = 0
 for (i in 1:length(network_database[[1]])){
