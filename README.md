@@ -1,1 +1,1 @@
-# ee239
+# regression model using R
