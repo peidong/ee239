@@ -377,13 +377,18 @@ for (i in 1:fold_num){
 }
 
 #Random Forest model
+cat("", file="randomForestoutput.csv", append=FALSE)
 result_temp_randomForest <- data.frame()
 fit_randomForest_best <- data.frame()
 best_RMSE_difference_randomForest <- 1000.0
 depth_randomForest_best <- 0
 ntree_randomForest_best <- 0
-for (i_depth in 4:16){
-    for (i_ntree in 20:80){
+for (i_depth in 4:5){
+    for (i_ntree in 20:21){
+        fold_fit_randomForest_best <- data.frame()
+        fold_best_RMSE_difference_randomForest <- 1000.0
+        fold_depth_randomForest_best <- 0
+        fold_ntree_randomForest_best <- 0
         for (i in 1:fold_num){
             # remove rows with id i from dataframe to create training set
             # select rows with id i to create test set
@@ -401,15 +406,22 @@ for (i_depth in 4:16){
             names(result_temp_randomForest) <- c("Predicted", "Actual")
             result_temp_randomForest$Difference <- abs(result_temp_randomForest$Actual - result_temp_randomForest$Predicted) ^ 2
             temp_randomForest_RMSE <- sqrt(sum(result_temp_randomForest$Difference)/length(result_temp_randomForest$Difference))
-            cat("===========================================\n")
-            cat(sprintf("ntree = %d\t depth = %d\tNo.%d\n", i_ntree, i_depth, i))
-            cat(sprintf("Random Forest Model: The RMSE is %f\n\n", temp_randomForest_RMSE))
-            if (best_RMSE_difference_randomForest > temp_randomForest_RMSE){
-                best_RMSE_difference_randomForest <- temp_randomForest_RMSE
-                fit_randomForest_best <- fit_randomForest
-                depth_randomForest_best <- i_depth
-                ntree_randomForest_best <- i_ntree
+            if (fold_best_RMSE_difference_randomForest > temp_randomForest_RMSE){
+                fold_best_RMSE_difference_randomForest <- temp_randomForest_RMSE
+                fold_fit_randomForest_best <- fit_randomForest
+                fold_depth_randomForest_best <- i_depth
+                fold_ntree_randomForest_best <- i_ntree
             }
+        }
+        cat("===========================================\n")
+        cat(sprintf("ntree = %d\t depth = %d\n", i_ntree, i_depth))
+        cat(sprintf("Random Forest Model: The RMSE is %f\n\n", fold_best_RMSE_difference_randomForest))
+        cat(sprintf("%d,%d,%f\n", i_ntree, i_depth, fold_best_RMSE_difference_randomForest), file="randomForestoutput.csv", append=TRUE)
+        if (best_RMSE_difference_randomForest > fold_best_RMSE_difference_randomForest){
+            best_RMSE_difference_randomForest <- fold_best_RMSE_difference_randomForest
+            fit_randomForest_best <- fold_fit_randomForest_best
+            depth_randomForest_best <- fold_depth_randomForest_best
+            ntree_randomForest_best <- fold_ntree_randomForest_best
         }
     }
 }
