@@ -377,14 +377,14 @@ for (i in 1:fold_num){
 }
 
 #Random Forest model
-cat("", file="randomForestoutput.csv", append=FALSE)
+cat("tree,depth,RMSE\n", file="randomForestoutput.csv", append=FALSE)
 result_temp_randomForest <- data.frame()
 fit_randomForest_best <- data.frame()
 best_RMSE_difference_randomForest <- 1000.0
 depth_randomForest_best <- 0
 ntree_randomForest_best <- 0
-for (i_depth in 4:5){
-    for (i_ntree in 20:21){
+for (i_depth in 4:64){
+    for (i_ntree in 20:40){
         fold_fit_randomForest_best <- data.frame()
         fold_best_RMSE_difference_randomForest <- 1000.0
         fold_depth_randomForest_best <- 0
