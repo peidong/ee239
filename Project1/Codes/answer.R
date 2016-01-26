@@ -377,14 +377,14 @@ for (i in 1:fold_num){
 }
 
 #Random Forest model
-cat("tree,depth,RMSE\n", file="depth4to64-ntree40to60-randomForestoutput.csv", append=FALSE)
+cat("tree,depth,RMSE\n", file="depth4to64-ntree41to60-randomForestoutput.csv", append=FALSE)
 result_temp_randomForest <- data.frame()
 fit_randomForest_best <- data.frame()
 best_RMSE_difference_randomForest <- 1000.0
 depth_randomForest_best <- 0
 ntree_randomForest_best <- 0
 for (i_depth in 4:64){
-    for (i_ntree in 40:60){
+    for (i_ntree in 41:60){
         fold_fit_randomForest_best <- data.frame()
         fold_best_RMSE_difference_randomForest <- 1000.0
         fold_depth_randomForest_best <- 0
@@ -416,7 +416,7 @@ for (i_depth in 4:64){
         cat("===========================================\n")
         cat(sprintf("ntree = %d\t depth = %d\n", i_ntree, i_depth))
         cat(sprintf("Random Forest Model: The RMSE is %f\n\n", fold_best_RMSE_difference_randomForest))
-        cat(sprintf("%d,%d,%f\n", i_ntree, i_depth, fold_best_RMSE_difference_randomForest), file="depth4to64-ntree40to60-randomForestoutput.csv", append=TRUE)
+        cat(sprintf("%d,%d,%f\n", i_ntree, i_depth, fold_best_RMSE_difference_randomForest), file="depth4to64-ntree41to60-randomForestoutput.csv", append=TRUE)
         if (best_RMSE_difference_randomForest > fold_best_RMSE_difference_randomForest){
             best_RMSE_difference_randomForest <- fold_best_RMSE_difference_randomForest
             fit_randomForest_best <- fold_fit_randomForest_best
