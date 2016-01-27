@@ -1,2 +1,2 @@
-library()
-network_database <- read.csv(file = "network_backup_dataset.csv", header = TRUE, sep = ",")
+# library()
+boston_housing_data_raw <- read.csv(file = "housing_data.csv", header = TRUE, sep = ",")
