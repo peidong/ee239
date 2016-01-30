@@ -1,0 +1,119 @@
+===========================================
+degree is 1
+Polynomial Model: The average RMSE is 0.079423
+
+===========================================
+degree is 2
+Polynomial Model: The average RMSE is 0.075832
+
+===========================================
+degree is 3
+Polynomial Model: The average RMSE is 0.073465
+
+===========================================
+degree is 4
+Polynomial Model: The average RMSE is 0.069522
+
+===========================================
+degree is 5
+Polynomial Model: The average RMSE is 0.066749
+
+===========================================
+degree is 6
+Polynomial Model: The average RMSE is 0.066566
+
+===========================================
+degree is 7
+Polynomial Model: The average RMSE is 0.066572
+
+===========================================
+degree is 8
+Polynomial Model: The average RMSE is 0.066576
+
+===========================================
+degree is 9
+Polynomial Model: The average RMSE is 0.066579
+
+===========================================
+degree is 10
+Polynomial Model: The average RMSE is 0.066587
+
+===========================================
+degree is 11
+Polynomial Model: The average RMSE is 0.066597
+
+===========================================
+degree is 12
+Polynomial Model: The average RMSE is 0.066600
+
+===========================================
+degree is 13
+Polynomial Model: The average RMSE is 0.066602
+
+===========================================
+degree is 14
+Polynomial Model: The average RMSE is 0.066605
+
+===========================================
+degree is 15
+Polynomial Model: The average RMSE is 0.066606
+
+===========================================
+degree is 16
+Polynomial Model: The average RMSE is 0.066614
+
+===========================================
+degree is 17
+Polynomial Model: The average RMSE is 0.066615
+
+===========================================
+degree is 18
+Polynomial Model: The average RMSE is 0.066616
+
+===========================================
+degree is 19
+Polynomial Model: The average RMSE is 0.066623
+
+===========================================
+degree is 20
+Polynomial Model: The average RMSE is 0.066622
+
+===========================================
+degree is 21
+Polynomial Model: The average RMSE is 0.066630
+
+===========================================
+degree is 22
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 23
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 24
+Polynomial Model: The average RMSE is 0.066630
+
+===========================================
+degree is 25
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 26
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 27
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 28
+Polynomial Model: The average RMSE is 0.066631
+
+===========================================
+degree is 29
+Polynomial Model: The average RMSE is 0.066650
+
+===========================================
+degree is 30
+Polynomial Model: The average RMSE is 0.066650

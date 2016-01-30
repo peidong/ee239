@@ -1,0 +1,80 @@
+===========================================
+No.1
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.03122786353171  0.00008902585672  0.00126023955775  0.00098638767434  0.00351771073753 
+         FileName        TimeBackup 
+-0.00008883114765  0.07181908660976 
+Linear Model: The RMSE is 0.075352
+===========================================
+No.2
+fit_linear coefficients:
+     (Intercept)             Week        DayOfWeek        StartTime     WorkFlowName         FileName 
+-0.0318337110385  0.0001439328103  0.0014397325239  0.0009711599257  0.0042572553357 -0.0001960929584 
+      TimeBackup 
+ 0.0701059843405 
+Linear Model: The RMSE is 0.091775
+===========================================
+No.3
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.03097744161562  0.00009652089122  0.00122334416430  0.00096944962329  0.00283681267683 
+         FileName        TimeBackup 
+ 0.00002688367569  0.07205592487361 
+Linear Model: The RMSE is 0.068208
+===========================================
+No.4
+fit_linear coefficients:
+     (Intercept)             Week        DayOfWeek        StartTime     WorkFlowName         FileName 
+-0.0312535499748  0.0001204608368  0.0012314939993  0.0009518122196  0.0043550021421 -0.0002156597261 
+      TimeBackup 
+ 0.0711770032297 
+Linear Model: The RMSE is 0.083518
+===========================================
+No.5
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.02983066523291  0.00008687990118  0.00115361397512  0.00095519641692  0.00242659316455 
+         FileName        TimeBackup 
+ 0.00007677381678  0.07168255997501 
+Linear Model: The RMSE is 0.075870
+===========================================
+No.6
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.03087057694589  0.00005748140957  0.00131577286555  0.00098840322971  0.00192318513701 
+         FileName        TimeBackup 
+ 0.00018297328785  0.07222041457248 
+Linear Model: The RMSE is 0.066070
+===========================================
+No.7
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.03174359564805  0.00017298186171  0.00140796475728  0.00097684292036  0.00331980494781 
+         FileName        TimeBackup 
+-0.00002027074805  0.06995778877109 
+Linear Model: The RMSE is 0.093274
+===========================================
+No.8
+fit_linear coefficients:
+      (Intercept)              Week         DayOfWeek         StartTime      WorkFlowName 
+-0.03049010609627  0.00006984046375  0.00129294346487  0.00100320254749  0.00256982140140 
+         FileName        TimeBackup 
+ 0.00005914084539  0.07099703796270 
+Linear Model: The RMSE is 0.081605
+===========================================
+No.9
+fit_linear coefficients:
+       (Intercept)               Week          DayOfWeek          StartTime       WorkFlowName 
+-0.031793442624007  0.000176468344139  0.001295517235825  0.000986278749292  0.003143348304059 
+          FileName         TimeBackup 
+-0.000007077465836  0.071084331198225 
+Linear Model: The RMSE is 0.075785
+===========================================
+No.10
+fit_linear coefficients:
+     (Intercept)             Week        DayOfWeek        StartTime     WorkFlowName         FileName 
+-0.0304717608415  0.0001212423713  0.0013189671131  0.0009633665451  0.0021885715069  0.0001190829549 
+      TimeBackup 
+ 0.0712918216619 
+Linear Model: The RMSE is 0.080887

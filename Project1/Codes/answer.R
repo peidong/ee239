@@ -1,7 +1,8 @@
-require(nnet)
+# require(nnet)
 # require(caret)
 library(pracma)
 library(randomForestSRC)
+library(neuralnet)
 # library(randomForest)
 network_database <- read.csv(file = "network_backup_dataset.csv", header = TRUE, sep = ",")
 # network_database[[8]] = 0
@@ -349,7 +350,7 @@ first_20days_data_network_database <- subset(data_network_database, Hours %in% c
 #choose File
 file_choose <- c(1,7,13,22,25)
 str_filename <- c("File_0", "File_6", "File_12", "File_21", "File_24")
-str_workflowname <- c("work_flow_0", "work_flow_1", "work_flow_2", "work_flow_3", "work_flow_4") 
+str_workflowname <- c("work_flow_0", "work_flow_1", "work_flow_2", "work_flow_3", "work_flow_4")
 for (i_workflow in 1:5){
     i_workflow_first_20days_data <- subset(first_20days_data_network_database, WorkFlowName %in% c(i_workflow))
     i_workflow_first_20days_file_data <- subset(i_workflow_first_20days_data, FileName %in% c(file_choose[i_workflow]))
@@ -401,7 +402,8 @@ prediction_all_data <- as.data.frame(predict(fit_linear_best, data_network_datab
 difference_all_data <- cbind(prediction_all_data, as.data.frame(data_network_database[,6]))
 difference_all_data <- cbind(difference_all_data, as.data.frame(data_network_database$Hours))
 names(difference_all_data) <- c("Predicted", "Actual", "Hours")
-plot(difference_all_data$Hours, difference_all_data$Predicted)
+plot(difference_all_data$Hours, difference_all_data$Actual, type="p", col="red", cex=0.5, xlab="Hours (h)", ylab="Fitted values and actual values (GB)", main="Fitted values and actual values scattered plot over time")
+points(difference_all_data$Hours, difference_all_data$Predicted, col="blue", cex=0.5)
 
 # Problem 2(b)
 
@@ -463,6 +465,56 @@ cat(sprintf("Random Forest Model: The RMSE is %f\n\n", best_RMSE_difference_rand
 
 # Problem 2(c)
 
+#neural network regression
+fold_num = 10 #Folds
+# sample from 1 to fold_num, nrow times (the number of observations in the data)
+data_network_database$id <- sample(1:fold_num, nrow(data_network_database), replace = TRUE)
+list <- 1:fold_num
+result_temp_neural <- data.frame()
+fit_neural_best <- data.frame()
+best_RMSE_difference_neural <- 1000.0
+hidden_neural_best <- 0
+threshold_neural_best <- 0
+for (i_hidden in 1:1){
+    for (i_threshold in 1:1){
+        fold_fit_neural_best <- data.frame()
+        fold_best_RMSE_difference_neural <- 1000.0
+        fold_hidden_neural_best <- 0
+        fold_threshold_neural_best <- 0
+        for (i in 1:fold_num){
+            # remove rows with id i from dataframe to create training set
+            # select rows with id i to create test set
+            trainingset <- subset(data_network_database, id %in% list[-i])
+            testset <- subset(data_network_database, id %in% c(i))
+
+            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=i_hidden, threshold=i_threshold)
+
+            test_x <- model.matrix(SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, testset)
+            temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x))
+            # keep only the Sepal Length Column
+            result_temp_neural <- cbind(temp_prediction_neural, as.data.frame(testset[,6]))
+            names(result_temp_neural) <- c("Predicted", "Actual")
+            result_temp_neural$Difference <- abs(result_temp_neural$Actual - result_temp_neural$Predicted) ^ 2
+            temp_neural_RMSE <- sqrt(sum(result_temp_neural$Difference)/length(result_temp_neural$Difference))
+            if (fold_best_RMSE_difference_neural > temp_neural_RMSE){
+                fold_best_RMSE_difference_neural <- temp_neural_RMSE
+                fold_fit_neural_best <- fit_neural
+                fold_hidden_neural_best <- i_hidden
+                fold_threshold_neural_best <- i_threshold
+            }
+        }
+        cat("===========================================\n")
+        cat(sprintf("threshold = %d\t hidden = %d\n", i_threshold, i_hidden))
+        cat(sprintf("Random Forest Model: The RMSE is %f\n\n", fold_best_RMSE_difference_neural))
+        if (best_RMSE_difference_neural > fold_best_RMSE_difference_neural){
+            best_RMSE_difference_neural <- fold_best_RMSE_difference_neural
+            fit_neural_best <- fold_fit_neural_best
+            hidden_neural_best <- fold_hidden_neural_best
+            threshold_neural_best <- fold_threshold_neural_best
+        }
+    }
+}
+
 # Problem 3 part 1
 for (i_workflow in 1:5){
     data_i_workflow_network <- subset(data_network_database, WorkFlowName %in% c(i_workflow))
@@ -473,6 +525,7 @@ for (i_workflow in 1:5){
     result_temp_linear <- data.frame()
     fit_linear_best <- list()
     best_RMSE_difference_linear <- 1000.0
+    sum_RMSE_linear <- 0.0
     for (i in 1:fold_num){
         # remove rows with id i from dataframe to create training set
         # select rows with id i to create test set
@@ -484,21 +537,25 @@ for (i_workflow in 1:5){
 
         temp_prediction_linear <- as.data.frame(predict(fit_linear, testset[,-6]))
         # append this iteration's predictions to the end of the prediction_linear data frame
-        cat("===========================================\n")
-        cat(sprintf("No.%d\n", i))
-        cat(sprintf("fit_linear coefficients:\n"))
-        print(fit_linear$coefficients)
+        # cat("===========================================\n")
+        # cat(sprintf("No.%d\n", i))
+        # cat(sprintf("fit_linear coefficients:\n"))
+        # print(fit_linear$coefficients)
 
         result_temp_linear <- cbind(temp_prediction_linear, as.data.frame(testset[,6]))
         names(result_temp_linear) <- c("Predicted", "Actual")
         result_temp_linear$Difference <- abs(result_temp_linear$Actual - result_temp_linear$Predicted) ^ 2
         temp_linear_RMSE <- sqrt(sum(result_temp_linear$Difference) / length(result_temp_linear$Difference))
-        cat(sprintf("Linear Model: The RMSE is %f\n", temp_linear_RMSE))
+        # cat(sprintf("Linear Model: The RMSE is %f\n", temp_linear_RMSE))
+        sum_RMSE_linear <- sum_RMSE_linear + temp_linear_RMSE
         if (best_RMSE_difference_linear > temp_linear_RMSE){
             best_RMSE_difference_linear <- temp_linear_RMSE
             fit_linear_best <- fit_linear
         }
     }
+    cat("===========================================\n")
+    cat(sprintf("WorkFlow No.%d\n", i_workflow-1))
+    cat(sprintf("Linear Model: The average RMSE is %f\n", sum_RMSE_linear/fold_num))
 }
 
 #Problem 3 part 2
@@ -509,7 +566,7 @@ list <- 1:fold_num
 best_RMSE_difference_poly <- 1000.0
 result_temp_poly <- data.frame()
 fit_poly_best <- list()
-for (i_degree in 1:29){
+for (i_degree in 1:30){
     sum_RMSE_difference_poly <- 0
     for (i in 1:fold_num){
         # remove rows with id i from dataframe to create training set
@@ -518,7 +575,7 @@ for (i_degree in 1:29){
         testset <- subset(data_network_database, id %in% c(i))
 
         # run a poly regression model
-        fit_poly <- lm(SizeBackup ~ poly(Week, i_degree) + poly(DayOfWeek, i_degree) + poly(StartTime, i_degree) + poly(WorkFlowName, i_degree) + poly(FileName, i_degree) + poly(TimeBackup, i_degree), data=trainingset)
+        fit_poly <- lm(SizeBackup ~ poly(Week, i_degree, raw=TRUE) + poly(DayOfWeek, i_degree, raw=TRUE) + poly(StartTime, i_degree, raw=TRUE) + poly(WorkFlowName, i_degree, raw=TRUE) + poly(FileName, i_degree, raw=TRUE) + poly(TimeBackup, i_degree, raw=TRUE), data=trainingset)
 
         temp_prediction_poly <- as.data.frame(predict(fit_poly, newdata=testset[,-6]))
         # append this iteration's predictions to the end of the prediction_poly data frame
