@@ -566,7 +566,9 @@ list <- 1:fold_num
 best_RMSE_difference_poly <- 1000.0
 result_temp_poly <- data.frame()
 fit_poly_best <- list()
-for (i_degree in 1:30){
+degree_vector <- c()
+RMSE_vector <- c()
+for (i_degree in 1:90){
     sum_RMSE_difference_poly <- 0
     for (i in 1:fold_num){
         # remove rows with id i from dataframe to create training set
@@ -592,4 +594,7 @@ for (i_degree in 1:30){
     cat("===========================================\n")
     cat(sprintf("degree is %d\n", i_degree))
     cat(sprintf("Polynomial Model: The average RMSE is %f\n\n", sum_RMSE_difference_poly/fold_num))
+    degree_vector <- append(degree_vector, i_degree)
+    RMSE_vector <- append(RMSE_vector, sum_RMSE_difference_poly/fold_num)
 }
+    plot(degree_vector, RMSE_vector, type="o", col="blue", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")
