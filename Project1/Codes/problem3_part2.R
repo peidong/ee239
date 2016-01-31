@@ -204,7 +204,7 @@ result_temp_poly <- data.frame()
 fit_poly_best <- list()
 degree_vector <- c()
 RMSE_vector <- c()
-for (i_degree in 1:34){
+for (i_degree in 1:36){
     sum_RMSE_difference_poly <- 0
     for (i in 1:fold_num){
         # remove rows with id i from dataframe to create training set
@@ -233,4 +233,4 @@ for (i_degree in 1:34){
     degree_vector <- append(degree_vector, i_degree)
     RMSE_vector <- append(RMSE_vector, sum_RMSE_difference_poly/fold_num)
 }
-    plot(degree_vector, RMSE_vector, type="o", col="blue", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")
+    plot(degree_vector, RMSE_vector, type="o", col="blue", log="y", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")

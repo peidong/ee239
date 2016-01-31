@@ -597,4 +597,4 @@ for (i_degree in 6:20){
     degree_vector <- append(degree_vector, i_degree)
     RMSE_vector <- append(RMSE_vector, sum_RMSE_difference_poly/fold_num)
 }
-    plot(degree_vector, RMSE_vector, type="o", col="blue", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")
+    plot(degree_vector, RMSE_vector, type="o", col="blue", log="y", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")
