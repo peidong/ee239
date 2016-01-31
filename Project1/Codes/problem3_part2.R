@@ -2,7 +2,7 @@
 # require(caret)
 library(pracma)
 library(randomForestSRC)
-library(neuralnet)
+# library(neuralnet)
 # library(randomForest)
 network_database <- read.csv(file = "network_backup_dataset.csv", header = TRUE, sep = ",")
 
