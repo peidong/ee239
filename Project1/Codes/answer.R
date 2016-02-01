@@ -311,31 +311,9 @@ cat(sprintf("Random Forest Model: The RMSE is %f\n\n", best_RMSE_difference_rand
 }
 
 # Problem 2(c)
-set.seed(8)
-
-# neural network regression
-# use 10-fold cross-validation
-ctrl <- trainControl(method = "cv", number = 10)
-# train a linear regression model
-neuralnetFit <- train(x=features, y=target, method = "neuralnet",trControl = ctrl)
-cat("===========================================================\n")
-cat("Estimated coefficient for each predicator:\n")
-print(summary(neuralnetFit))
-cat("===========================================================\n")
-cat("Averaged RMSE:\n")
-print(neuralnetFit)
-# plot "fitted values and actual values scattered plot over time"
-plot_1<-xyplot(target ~ c(1:length(target)), type=c("p","g"), xlab="", ylab="Fitted Values (Red) / Actual values (Blue)")
-plot_2<-xyplot(predict(neuralnetFit) ~ c(1:length(predict(neuralnetFit))), type=c("p","g"), col="red")
-print(plot_1+plot_2)
-# plot "actual values versus the fitted values"
-plot_3<-xyplot(target ~ predict(neuralnetFit), type=c("p","g"), xlab="Fitted Values", ylab="Actual values")
-print(plot_3)
-# plot "residuals versus fitted values"
-plot_4<-xyplot(resid(neuralnetFit) ~ predict(neuralnetFit), type=c("p","g"), xlab="Fitted Values", ylab="Residuals")
-print(plot_4)
 
 #neural network regression
+cat("hidden,threshold,RMSE\n", file="neuralOutput.csv", append=FALSE)
 fold_num = 10 #Folds
 # sample from 1 to fold_num, nrow times (the number of observations in the data)
 data_network_database$id <- sample(1:fold_num, nrow(data_network_database), replace = TRUE)
@@ -345,10 +323,11 @@ fit_neural_best <- data.frame()
 best_RMSE_difference_neural <- 1000.0
 hidden_neural_best <- 0
 threshold_neural_best <- 0
-for (i_hidden in 1:1){
-    for (i_threshold in 1:1){
+for (i_hidden in 1:30){
+    for (i_threshold in 1:30){
         fold_fit_neural_best <- data.frame()
         fold_best_RMSE_difference_neural <- 1000.0
+        sum_fold_RMSE_neural <- 0.0
         fold_hidden_neural_best <- 0
         fold_threshold_neural_best <- 0
         for (i in 1:fold_num){
@@ -360,9 +339,9 @@ for (i_hidden in 1:1){
             fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=i_hidden, threshold=i_threshold)
 
             test_x <- model.matrix(SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, testset)
-            temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x))
+            temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x[,-1]))
             # keep only the Sepal Length Column
-            result_temp_neural <- cbind(temp_prediction_neural, as.data.frame(testset[,6]))
+            result_temp_neural <- cbind(temp_prediction_neural$net.result, as.data.frame(testset[,6]))
             names(result_temp_neural) <- c("Predicted", "Actual")
             result_temp_neural$Difference <- abs(result_temp_neural$Actual - result_temp_neural$Predicted) ^ 2
             temp_neural_RMSE <- sqrt(sum(result_temp_neural$Difference)/length(result_temp_neural$Difference))
@@ -372,10 +351,13 @@ for (i_hidden in 1:1){
                 fold_hidden_neural_best <- i_hidden
                 fold_threshold_neural_best <- i_threshold
             }
+            sum_fold_RMSE_neural <- sum_fold_RMSE_neural + temp_neural_RMSE
         }
-        cat("===========================================\n")
-        cat(sprintf("threshold = %d\t hidden = %d\n", i_threshold, i_hidden))
-        cat(sprintf("Random Forest Model: The RMSE is %f\n\n", fold_best_RMSE_difference_neural))
+        # cat("===========================================\n")
+        cat(sprintf("%d,%d,%f\n", i_hidden, i_threshold, sum_fold_RMSE_neural/fold_num))
+        # cat(sprintf("threshold = %d\t hidden = %d\n", i_hidden, i_threshold))
+        # cat(sprintf("Neural Network Model: The Average RMSE is %f\n\n", sum_fold_RMSE_neural/fold_num))
+        cat(sprintf("%d,%d,%f\n", i_hidden, i_threshold, sum_fold_RMSE_neural/fold_num), file="neuralOutput.csv", append=TRUE)
         if (best_RMSE_difference_neural > fold_best_RMSE_difference_neural){
             best_RMSE_difference_neural <- fold_best_RMSE_difference_neural
             fit_neural_best <- fold_fit_neural_best
