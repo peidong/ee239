@@ -194,8 +194,8 @@ fit_neural_best <- data.frame()
 best_RMSE_difference_neural <- 1000.0
 hidden_neural_best <- 0
 threshold_neural_best <- 0
-for (i_hidden_nodes_each_layer in 1:16){
-    for (i_hidden_layers in 1:4){
+for (i_hidden_nodes_each_layer in 2:16){
+    for (i_hidden_layers in 2:4){
         fold_fit_neural_best <- data.frame()
         fold_best_RMSE_difference_neural <- 1000.0
         sum_fold_RMSE_neural <- 0.0
