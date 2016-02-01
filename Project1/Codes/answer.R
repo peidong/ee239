@@ -337,7 +337,7 @@ for (i_hidden_nodes_each_layer in 2:16){
             trainingset <- subset(data_network_database, id %in% list[-i])
             testset <- subset(data_network_database, id %in% c(i))
 
-            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=rep(i_hidden_nodes_each_layer,i_hidden_layers))
+            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=rep(i_hidden_nodes_each_layer,i_hidden_layers), stepmax=1e6)
 
             test_x <- model.matrix(SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, testset)
             temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x[,-1]))
