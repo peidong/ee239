@@ -179,10 +179,12 @@ for (j in 1:7){
         names(data_network_database)[j] <- "TimeBackup"
     }
 }
+
 # Problem 2(c)
 
 #neural network regression
-cat("hidden,threshold,RMSE\n", file="neuralOutput.csv", append=FALSE)
+cat("hidden nodes each layer,hidden layers,RMSE\n", file="neuralOutput.csv", append=FALSE)
+cat("hidden nodes each layer,hidden layers,RMSE\n")
 fold_num = 10 #Folds
 # sample from 1 to fold_num, nrow times (the number of observations in the data)
 data_network_database$id <- sample(1:fold_num, nrow(data_network_database), replace = TRUE)
@@ -192,8 +194,8 @@ fit_neural_best <- data.frame()
 best_RMSE_difference_neural <- 1000.0
 hidden_neural_best <- 0
 threshold_neural_best <- 0
-for (i_hidden in 1:30){
-    for (i_threshold in 1:30){
+for (i_hidden_nodes_each_layer in 1:16){
+    for (i_hidden_layers in 1:4){
         fold_fit_neural_best <- data.frame()
         fold_best_RMSE_difference_neural <- 1000.0
         sum_fold_RMSE_neural <- 0.0
@@ -205,7 +207,7 @@ for (i_hidden in 1:30){
             trainingset <- subset(data_network_database, id %in% list[-i])
             testset <- subset(data_network_database, id %in% c(i))
 
-            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=i_hidden, threshold=i_threshold)
+            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=rep(i_hidden_nodes_each_layer,i_hidden_layers))
 
             test_x <- model.matrix(SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, testset)
             temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x[,-1]))
@@ -217,16 +219,16 @@ for (i_hidden in 1:30){
             if (fold_best_RMSE_difference_neural > temp_neural_RMSE){
                 fold_best_RMSE_difference_neural <- temp_neural_RMSE
                 fold_fit_neural_best <- fit_neural
-                fold_hidden_neural_best <- i_hidden
-                fold_threshold_neural_best <- i_threshold
+                fold_hidden_neural_best <- i_hidden_nodes_each_layer
+                fold_threshold_neural_best <- i_hidden_layers
             }
             sum_fold_RMSE_neural <- sum_fold_RMSE_neural + temp_neural_RMSE
         }
         # cat("===========================================\n")
-        cat(sprintf("%d,%d,%f\n", i_hidden, i_threshold, sum_fold_RMSE_neural/fold_num))
-        # cat(sprintf("threshold = %d\t hidden = %d\n", i_hidden, i_threshold))
+        cat(sprintf("%d,%d,%f\n", i_hidden_nodes_each_layer, i_hidden_layers, sum_fold_RMSE_neural/fold_num))
+        # cat(sprintf("threshold = %d\t hidden = %d\n", i_hidden_nodes_each_layer, i_hidden_layers))
         # cat(sprintf("Neural Network Model: The Average RMSE is %f\n\n", sum_fold_RMSE_neural/fold_num))
-        cat(sprintf("%d,%d,%f\n", i_hidden, i_threshold, sum_fold_RMSE_neural/fold_num), file="neuralOutput.csv", append=TRUE)
+        cat(sprintf("%d,%d,%f\n", i_hidden_nodes_each_layer, i_hidden_layers, sum_fold_RMSE_neural/fold_num), file="neuralOutput.csv", append=TRUE)
         if (best_RMSE_difference_neural > fold_best_RMSE_difference_neural){
             best_RMSE_difference_neural <- fold_best_RMSE_difference_neural
             fit_neural_best <- fold_fit_neural_best
@@ -235,4 +237,3 @@ for (i_hidden in 1:30){
         }
     }
 }
-
