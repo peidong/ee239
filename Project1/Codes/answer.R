@@ -311,21 +311,24 @@ cat(sprintf("Random Forest Model: The RMSE is %f\n\n", best_RMSE_difference_rand
 }
 
 # Problem 2(c)
+FileName <- 17
+str_filename <- "File_16"
+singleFile_data_network_database <- subset(data_network_database, FileName %in% c(17))
 
 #neural network regression
 cat("hidden nodes each layer,hidden layers,RMSE\n", file="neuralOutput.csv", append=FALSE)
 cat("hidden nodes each layer,hidden layers,RMSE\n")
 fold_num = 10 #Folds
 # sample from 1 to fold_num, nrow times (the number of observations in the data)
-data_network_database$id <- sample(1:fold_num, nrow(data_network_database), replace = TRUE)
+singleFile_data_network_database$id <- sample(1:fold_num, nrow(singleFile_data_network_database), replace = TRUE)
 list <- 1:fold_num
 result_temp_neural <- data.frame()
 fit_neural_best <- data.frame()
 best_RMSE_difference_neural <- 1000.0
 hidden_neural_best <- 0
 threshold_neural_best <- 0
-for (i_hidden_nodes_each_layer in 2:16){
-    for (i_hidden_layers in 2:4){
+for (i_hidden_nodes_each_layer in 1:15){
+    for (i_hidden_layers in 1:4){
         fold_fit_neural_best <- data.frame()
         fold_best_RMSE_difference_neural <- 1000.0
         sum_fold_RMSE_neural <- 0.0
@@ -334,10 +337,10 @@ for (i_hidden_nodes_each_layer in 2:16){
         for (i in 1:fold_num){
             # remove rows with id i from dataframe to create training set
             # select rows with id i to create test set
-            trainingset <- subset(data_network_database, id %in% list[-i])
-            testset <- subset(data_network_database, id %in% c(i))
+            trainingset <- subset(singleFile_data_network_database, id %in% list[-i])
+            testset <- subset(singleFile_data_network_database, id %in% c(i))
 
-            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=rep(i_hidden_nodes_each_layer,i_hidden_layers), stepmax=1e6)
+            fit_neural <- neuralnet(formula=SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, data=trainingset, hidden=rep(i_hidden_nodes_each_layer,i_hidden_layers))
 
             test_x <- model.matrix(SizeBackup ~ Week+DayOfWeek+StartTime+WorkFlowName+FileName+TimeBackup, testset)
             temp_prediction_neural <- as.data.frame(compute(fit_neural, test_x[,-1]))
