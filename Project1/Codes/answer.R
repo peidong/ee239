@@ -1,112 +1,10 @@
 # require(nnet)
-# require(caret)
+require(caret)
 library(pracma)
 library(randomForestSRC)
 library(neuralnet)
 # library(randomForest)
 network_database <- read.csv(file = "network_backup_dataset.csv", header = TRUE, sep = ",")
-# network_database[[8]] = 0
-# for (i in 1:length(network_database[[1]])){
-#     if (network_database[[2]][i] == "Monday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 1
-#     }
-#     if (network_database[[2]][i] == "Tuesday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 2
-#     }
-#     if (network_database[[2]][i] == "Wednesday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 3
-#     }
-#     if (network_database[[2]][i] == "Thursday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 4
-#     }
-#     if (network_database[[2]][i] == "Friday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 5
-#     }
-#     if (network_database[[2]][i] == "Saturday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 6
-#     }
-#     if (network_database[[2]][i] == "Sunday"){
-#         network_database[[8]][i] <- (network_database[[1]][i]-1)*7 + 7
-#     }
-# }
-# names(network_database)[8] <- "Days"
-# network_total_days <- max(network_database[[8]])
-# # Prepare
-# network_database_workflow0 <- list()
-# network_database_workflow1 <- list()
-# network_database_workflow2 <- list()
-# network_database_workflow3 <- list()
-# network_database_workflow4 <- list()
-# network_database_workflow0[[1]] <- network_database[[8]][which(network_database[[4]] %in% "work_flow_0")]
-# network_database_workflow0[[2]] <- network_database[[6]][which(network_database[[4]] %in% "work_flow_0")]
-# network_database_workflow1[[1]] <- network_database[[8]][which(network_database[[4]] %in% "work_flow_1")]
-# network_database_workflow1[[2]] <- network_database[[6]][which(network_database[[4]] %in% "work_flow_1")]
-# network_database_workflow2[[1]] <- network_database[[8]][which(network_database[[4]] %in% "work_flow_2")]
-# network_database_workflow2[[2]] <- network_database[[6]][which(network_database[[4]] %in% "work_flow_2")]
-# network_database_workflow3[[1]] <- network_database[[8]][which(network_database[[4]] %in% "work_flow_3")]
-# network_database_workflow3[[2]] <- network_database[[6]][which(network_database[[4]] %in% "work_flow_3")]
-# network_database_workflow4[[1]] <- network_database[[8]][which(network_database[[4]] %in% "work_flow_4")]
-# network_database_workflow4[[2]] <- network_database[[6]][which(network_database[[4]] %in% "work_flow_4")]
-# names(network_database_workflow0)[1] <- "Days"
-# names(network_database_workflow0)[2] <- "Size"
-# names(network_database_workflow1)[1] <- "Days"
-# names(network_database_workflow1)[2] <- "Size"
-# names(network_database_workflow2)[1] <- "Days"
-# names(network_database_workflow2)[2] <- "Size"
-# names(network_database_workflow3)[1] <- "Days"
-# names(network_database_workflow3)[2] <- "Size"
-# names(network_database_workflow4)[1] <- "Days"
-# names(network_database_workflow4)[2] <- "Size"
-# sum_network_database_workflow0 <- list()
-# sum_network_database_workflow0[[1]] <- 0
-# sum_network_database_workflow0[[2]] <- 0
-# sum_network_database_workflow1 <- list()
-# sum_network_database_workflow1[[1]] <- 0
-# sum_network_database_workflow1[[2]] <- 0
-# sum_network_database_workflow2 <- list()
-# sum_network_database_workflow2[[1]] <- 0
-# sum_network_database_workflow2[[2]] <- 0
-# sum_network_database_workflow3 <- list()
-# sum_network_database_workflow3[[1]] <- 0
-# sum_network_database_workflow3[[2]] <- 0
-# sum_network_database_workflow4 <- list()
-# sum_network_database_workflow4[[1]] <- 0
-# sum_network_database_workflow4[[2]] <- 0
-# for (i in 1:floor(network_total_days/20)){
-#     sum_network_database_workflow0[[1]][i] <- 20*i
-#     sum_network_database_workflow0[[2]][i] <- sum(network_database_workflow0[[2]][which(network_database_workflow0$Days <= 20*i & network_database_workflow0$Days > 20*(i-1))])
-# }
-# for (i in 1:floor(network_total_days/20)){
-#     sum_network_database_workflow1[[1]][i] <- 20*i
-#     sum_network_database_workflow1[[2]][i] <- sum(network_database_workflow1[[2]][which(network_database_workflow1$Days <= 20*i & network_database_workflow1$Days > 20*(i-1))])
-# }
-# for (i in 1:floor(network_total_days/20)){
-#     sum_network_database_workflow2[[1]][i] <- 20*i
-#     sum_network_database_workflow2[[2]][i] <- sum(network_database_workflow2[[2]][which(network_database_workflow2$Days <= 20*i & network_database_workflow2$Days > 20*(i-1))])
-# }
-# for (i in 1:floor(network_total_days/20)){
-#     sum_network_database_workflow3[[1]][i] <- 20*i
-#     sum_network_database_workflow3[[2]][i] <- sum(network_database_workflow3[[2]][which(network_database_workflow3$Days <= 20*i & network_database_workflow3$Days > 20*(i-1))])
-# }
-# for (i in 1:floor(network_total_days/20)){
-#     sum_network_database_workflow4[[1]][i] <- 20*i
-#     sum_network_database_workflow4[[2]][i] <- sum(network_database_workflow4[[2]][which(network_database_workflow4$Days <= 20*i & network_database_workflow4$Days > 20*(i-1))])
-# }
-# names(sum_network_database_workflow0)[1] <- "Days"
-# names(sum_network_database_workflow0)[2] <- "Size"
-# names(sum_network_database_workflow1)[1] <- "Days"
-# names(sum_network_database_workflow1)[2] <- "Size"
-# names(sum_network_database_workflow2)[1] <- "Days"
-# names(sum_network_database_workflow2)[2] <- "Size"
-# names(sum_network_database_workflow3)[1] <- "Days"
-# names(sum_network_database_workflow3)[2] <- "Size"
-# names(sum_network_database_workflow4)[1] <- "Days"
-# names(sum_network_database_workflow4)[2] <- "Size"
-# barplot(sum_network_database_workflow0$Size, names.arg = c("1~20", "21~40", "41~60", "61~80", "81~100"),main="Workflow0 Copy Sizes Within a Period of 20 Days", xlab="Days")
-# barplot(sum_network_database_workflow1$Size, names.arg = c("1~20", "21~40", "41~60", "61~80", "81~100"),main="Workflow1 Copy Sizes Within a Period of 20 Days", xlab="Days")
-# barplot(sum_network_database_workflow2$Size, names.arg = c("1~20", "21~40", "41~60", "61~80", "81~100"),main="Workflow2 Copy Sizes Within a Period of 20 Days", xlab="Days")
-# barplot(sum_network_database_workflow3$Size, names.arg = c("1~20", "21~40", "41~60", "61~80", "81~100"),main="Workflow3 Copy Sizes Within a Period of 20 Days", xlab="Days")
-# barplot(sum_network_database_workflow4$Size, names.arg = c("1~20", "21~40", "41~60", "61~80", "81~100"),main="Workflow4 Copy Sizes Within a Period of 20 Days", xlab="Days")
 # Prepare 2
 
 #####################################################
@@ -264,64 +162,10 @@ network_database_linear_model[[6]] <- network_database[[6]]
 names(network_database_linear_model)[6] <- "SizeBackup"
 network_database_linear_model[[7]] <- network_database[[7]]
 names(network_database_linear_model)[7] <- "TimeBackup"
-#####################################################
-#
-#   Generate new linear model database for training
-#   End
-#
-#####################################################
 
-#####################################################
-#
-#   Generate random 90% and 10% database
-#   Begin
-#
-#####################################################
-
-# random_index <- sample(1:length(network_database_linear_model[[1]]), length(network_database_linear_model[[1]]))
-# length_group <- floor(length(network_database_linear_model[[1]]) / 10) + 1
-# length_group_last_one <- length(network_database_linear_model[[1]]) - length_group * 9
-# list_random_network_database <- list()
-# temp_vector <- c()
-# temp_list <- list()
-# for (i in 1:10){
-#     temp_list <- list()
-#     if (i == 10){
-#         temp_index_low <- (i-1)*length_group+1
-#         temp_index_high <- (i-1)*length_group+length_group_last_one
-#     }else{
-#         temp_index_low <- (i-1)*length_group+1
-#         temp_index_high <- i*length_group
-#     }
-#     for (j in 1:7){
-#         temp_vector <- c()
-#         temp_vector <- network_database_linear_model[[j]][random_index[temp_index_low:temp_index_high]]
-#         temp_list[[j]] <- temp_vector
-#         if (j == 1){
-#             names(temp_list)[j] <- "Week"
-#         } else if (j == 2){
-#             names(temp_list)[j] <- "DayOfWeek"
-#         } else if (j == 3){
-#             names(temp_list)[j] <- "StartTime"
-#         } else if (j == 4){
-#             names(temp_list)[j] <- "WorkFlowName"
-#         } else if (j == 5){
-#             names(temp_list)[j] <- "FileName"
-#         } else if (j == 6){
-#             names(temp_list)[j] <- "SizeBackup"
-#         } else if (j == 7){
-#             names(temp_list)[j] <- "TimeBackup"
-#         }
-#     }
-#     list_random_network_database[[i]] <- temp_list
-# }
-
-#####################################################
-#
+#################
 #   10 folds
-#   Begin
-#
-#####################################################
+#################
 data_network_database <- data.frame(matrix(unlist(network_database_linear_model), ncol=7))
 for (j in 1:7){
     if (j == 1){
@@ -340,6 +184,9 @@ for (j in 1:7){
         names(data_network_database)[j] <- "TimeBackup"
     }
 }
+
+features <- data_network_database[,-6]
+target <- data_network_database[,6]
 
 #Problem 1
 data_network_database$Hours <- 0
@@ -464,6 +311,29 @@ cat(sprintf("Random Forest Model: The RMSE is %f\n\n", best_RMSE_difference_rand
 }
 
 # Problem 2(c)
+set.seed(8)
+
+# neural network regression
+# use 10-fold cross-validation
+ctrl <- trainControl(method = "cv", number = 10)
+# train a linear regression model
+neuralnetFit <- train(x=features, y=target, method = "neuralnet",trControl = ctrl)
+cat("===========================================================\n")
+cat("Estimated coefficient for each predicator:\n")
+print(summary(neuralnetFit))
+cat("===========================================================\n")
+cat("Averaged RMSE:\n")
+print(neuralnetFit)
+# plot "fitted values and actual values scattered plot over time"
+plot_1<-xyplot(target ~ c(1:length(target)), type=c("p","g"), xlab="", ylab="Fitted Values (Red) / Actual values (Blue)")
+plot_2<-xyplot(predict(neuralnetFit) ~ c(1:length(predict(neuralnetFit))), type=c("p","g"), col="red")
+print(plot_1+plot_2)
+# plot "actual values versus the fitted values"
+plot_3<-xyplot(target ~ predict(neuralnetFit), type=c("p","g"), xlab="Fitted Values", ylab="Actual values")
+print(plot_3)
+# plot "residuals versus fitted values"
+plot_4<-xyplot(resid(neuralnetFit) ~ predict(neuralnetFit), type=c("p","g"), xlab="Fitted Values", ylab="Residuals")
+print(plot_4)
 
 #neural network regression
 fold_num = 10 #Folds

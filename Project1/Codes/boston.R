@@ -1,7 +1,15 @@
+# load the library
+library(AppliedPredictiveModeling)
+library(caret)
+library(lars)
+library(elasticnet)
+library(latticeExtra)
 library(glmnet)
-# library()
-boston_housing_data_raw <- read.csv(file = "housing_data.csv", header = TRUE, sep = ",")
 
+boston_housing_data_raw <- read.csv(file = "housing_data.csv", header = TRUE, sep = ",")
+features <- boston_housing_data_raw[,1:13]
+target <- boston_housing_data_raw[,14]
+set.seed(8)
 #Problem 4
 
 #linear model
@@ -55,7 +63,9 @@ list <- 1:fold_num
 best_RMSE_difference_poly <- 1000.0
 result_temp_poly <- data.frame()
 fit_poly_best <- list()
-for (i_degree in 1:30){
+degree_vector <- c()
+RMSE_vector <- c()
+for (i_degree in 1:10){
     sum_RMSE_difference_poly <- 0
     for (i in 1:fold_num){
         # remove rows with id i from dataframe to create training set
@@ -81,90 +91,33 @@ for (i_degree in 1:30){
     cat("===========================================\n")
     cat(sprintf("degree is %d\n", i_degree))
     cat(sprintf("Polynomial Model: The average RMSE is %f\n\n", sum_RMSE_difference_poly/fold_num))
+    degree_vector <- append(degree_vector, i_degree)
+    RMSE_vector <- append(RMSE_vector, sum_RMSE_difference_poly/fold_num)
 }
+plot(degree_vector, RMSE_vector, type="o", col="blue", log="y", xlab="Degree", ylab="RMSE Value", main="RMSE Value Against Degree")
 
 #Problem 5(a)
 
-fold_num = 10 #Folds
-# sample from 1 to fold_num, nrow times (the number of observations in the data)
-boston_housing_data_raw$id <- sample(1:fold_num, nrow(boston_housing_data_raw), replace = TRUE)
-list <- 1:fold_num
-result_temp_ridge <- data.frame()
-fit_ridge_best <- list()
-best_RMSE_difference_ridge <- 1000.0
-sum_RMSE_difference_ridge <- 0
-for (i_alpha in c(0.1,0.01,0.001)){
-    for (i in 1:fold_num){
-        # remove rows with id i from dataframe to create training set
-        # select rows with id i to create test set
-        trainingset <- subset(boston_housing_data_raw, id %in% list[-i])
-        testset <- subset(boston_housing_data_raw, id %in% c(i))
+# Ridge Regreesion Model
+# use 10-fold cross-validation
+ctrl <- trainControl(method = "cv", number = 10)
+# tune the complexity parameter alpha of the ridge regression in the range {0.1, 0.01, 0.001}
+ridgeGrid<- data.frame(.lambda = c(0.1, 0.01, 0.001))
+# train a ridge regression model
+ridgeFit <- train(features, target, method ="ridge",tuneGrid = ridgeGrid, trControl=ctrl, preProc=c("center","scale"))
+cat("===========================================================\n")
+cat("Ridge Regreesion Model:\n")
+print(ridgeFit)
 
-        # run a ridge regression model
-        training_x = model.matrix(MEDV ~ CRIM+ZN+INDUS+CHAS+NOX+RM+AGE+DIS+RAD+TAX+PTRATIO+B+LSTAT, trainingset)
-        training_y = trainingset$MEDV
-        fit_ridge <- glmnet(training_x, training_y, alpha = 0, lambda = i_alpha)
-
-        test_x <- model.matrix(MEDV ~ CRIM+ZN+INDUS+CHAS+NOX+RM+AGE+DIS+RAD+TAX+PTRATIO+B+LSTAT, testset)
-        temp_prediction_ridge <- as.data.frame(predict(fit_ridge, s=i_alpha, newx=test_x))
-        # append this iteration's predictions to the end of the prediction_ridge data frame
-        # cat(sprintf("fit_ridge coefficients:\n"))
-        # print(coef(fit_ridge))
-
-        result_temp_ridge <- cbind(temp_prediction_ridge, as.data.frame(testset[,14]))
-        names(result_temp_ridge) <- c("Predicted", "Actual")
-        result_temp_ridge$Difference <- abs(result_temp_ridge$Actual - result_temp_ridge$Predicted) ^ 2
-        temp_ridge_RMSE <- sqrt(sum(result_temp_ridge$Difference) / length(result_temp_ridge$Difference))
-        sum_RMSE_difference_ridge <- sum_RMSE_difference_ridge + temp_ridge_RMSE
-        if (best_RMSE_difference_ridge > temp_ridge_RMSE){
-            best_RMSE_difference_ridge <- temp_ridge_RMSE
-            fit_ridge_best <- fit_ridge
-        }
-    }
-    cat("===========================================\n")
-    cat(sprintf("alpha = %f \n", i_alpha))
-    cat(sprintf("Ridge Model: The average RMSE is %f\n", sum_RMSE_difference_ridge/fold_num))
-}
-
-#Problem 5(b)
-
-fold_num = 10 #Folds
-# sample from 1 to fold_num, nrow times (the number of observations in the data)
-boston_housing_data_raw$id <- sample(1:fold_num, nrow(boston_housing_data_raw), replace = TRUE)
-list <- 1:fold_num
-result_temp_ridge <- data.frame()
-fit_ridge_best <- list()
-best_RMSE_difference_ridge <- 1000.0
-sum_RMSE_difference_ridge <- 0
-for (i_alpha in c(0.1,0.01,0.001)){
-    for (i in 1:fold_num){
-        # remove rows with id i from dataframe to create training set
-        # select rows with id i to create test set
-        trainingset <- subset(boston_housing_data_raw, id %in% list[-i])
-        testset <- subset(boston_housing_data_raw, id %in% c(i))
-
-        # run a ridge regression model
-        training_x = model.matrix(MEDV ~ CRIM+ZN+INDUS+CHAS+NOX+RM+AGE+DIS+RAD+TAX+PTRATIO+B+LSTAT, trainingset)
-        training_y = trainingset$MEDV
-        fit_ridge <- glmnet(training_x, training_y, alpha = 1, lambda = i_alpha)
-
-        test_x <- model.matrix(MEDV ~ CRIM+ZN+INDUS+CHAS+NOX+RM+AGE+DIS+RAD+TAX+PTRATIO+B+LSTAT, testset)
-        temp_prediction_ridge <- as.data.frame(predict(fit_ridge, s=i_alpha, newx=test_x))
-        # append this iteration's predictions to the end of the prediction_ridge data frame
-        # cat(sprintf("fit_ridge coefficients:\n"))
-        # print(coef(fit_ridge))
-
-        result_temp_ridge <- cbind(temp_prediction_ridge, as.data.frame(testset[,14]))
-        names(result_temp_ridge) <- c("Predicted", "Actual")
-        result_temp_ridge$Difference <- abs(result_temp_ridge$Actual - result_temp_ridge$Predicted) ^ 2
-        temp_ridge_RMSE <- sqrt(sum(result_temp_ridge$Difference) / length(result_temp_ridge$Difference))
-        sum_RMSE_difference_ridge <- sum_RMSE_difference_ridge + temp_ridge_RMSE
-        if (best_RMSE_difference_ridge > temp_ridge_RMSE){
-            best_RMSE_difference_ridge <- temp_ridge_RMSE
-            fit_ridge_best <- fit_ridge
-        }
-    }
-    cat("===========================================\n")
-    cat(sprintf("alpha = %f \n", i_alpha))
-    cat(sprintf("Ridge Model: The average RMSE is %f\n", sum_RMSE_difference_ridge/fold_num))
-}
+# #Problem 5(b)
+# Lasso Regression Model
+# use 10-fold cross-validation
+ctrl <- trainControl(method = "cv", number = 10)
+# tune the complexity parameter alpha of the lasso regression in the range {0.1, 0.01, 0.001}
+# I also tried "alpha=1" to check if the lasso regression model we trained is correct
+lassoGrid <- expand.grid(.lambda=0, .fraction = c(1, 0.1, 0.01, 0.001))
+# train a lasso regression model
+lassoFit <- train(features, target, method ="enet", tuneGrid = lassoGrid, trControl=ctrl, preProc=c("center","scale"))
+cat("===========================================================\n")
+cat("Lasso Regreesion Model:\n")
+print(lassoFit)
