@@ -1,0 +1,58 @@
+\documentclass[pdftex,12pt,a4paper]{article}
+
+\usepackage[pdftex]{graphicx}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\begin{document}
+	\input{./title.tex}
+	
+	\tableofcontents
+	\newpage
+	
+	\section{Problem Statement}
+		Using the movielens ml-100k data set, build a system that predicts for an unknown user (whose simple demographics are
+available):
+		\begin{itemize}
+			\item Whether the user is likely to see a given movie.
+			\item And if the answer to the above is Yes then the star rating (on a scale of 1 to 5) that the user will most likely give to the movie.
+		\end{itemize}
+	
+	\section{Challenges}
+		Today's world is full of choices across all product categories which makes it important for consumers to always make a better choice. Recommender systems were created to solve this need and have revolutionalized e-commerce and advertising. Movie recommendation systems study a user's movie viewing and rating history and intelligently predict the genre of movies that a particular user might prefer and the rating he might give to a movie. This provides a powerful tool to both movie viewers and distributers. In a movie recommender system there can be several challenges:
+		\begin{itemize}
+			\item If a movie has very few ratings, it is difficult to predict recommendations on it.
+			\item Users have varying rating patterns. Some users give an average rating to almost all movies while some always give extreme ratings. Still others show a spread from 1 to 5. Some users give higher ratings to some directors and stars.
+			\item There can be attributes which are not given in the existing data set but which contribute to a user's rating.
+		\end{itemize}
+	
+	\section{Related Work}
+		Earlier works~\cite{Schein2002,MarlinThesis2004} have implemented several techniques like K-Nearest Neighbour classifiers, Naive Bayes classifiers and K-Medians clustering to make recommendations on this same dataset and to compare the results to Probabilistic and Collaborative prediction techniques. The most effective techniques for movie recommendation on this dataset have been Collaborative Filtering~\cite{Sarwar2001,Agarwal2009} and other matrix factorization methods~\cite{CoTriFactor2009}. MovieLens itself uses collaborative filtering to make recommendations~\cite{Herlocker1999}.
+	
+	\section{DataSet Review}
+		The data set consists of entries for 943 users, 1,682 movies and 100,000 ratings. Demographic data of the users has also been provided and includes age, gender, occupation and zipcode. The genre of the movies and some other information about the movies is also provided.
+	
+	\section{Methodology}
+		We are using Collaborative Filtering to provide movie recommendations. The rating $r$ which we predict for a movie $i$ by a user $u$ will be an aggregation of ratings given by top N users who are most similar to user $u$ and rated movie $i$.
+		\begin{center}
+			$r_{u,i} = aggr_{u^\prime \in U} r_{u^\prime, i}$
+		\end{center}
+		where $U$ is the set of all users except $u$.\\\\
+		For finding the most similar N users, we will use either the Pearson correlation similarity between two users x, y which is:
+		\begin{center}
+			$simil(x,y) = \frac{\sum\limits_{i \in I_{xy}}(r_{x,i}-\bar{r_x})(r_{y,i}-\bar{r_y})}{\sqrt{\sum\limits_{i \in I_{xy}}(r_{x,i}-\bar{r_x})^2\sum\limits_{i \in I_{xy}}(r_{y,i}-\bar{r_y})^2}}$
+		\end{center}
+		or the cosine similarity which is:
+		\begin{center}
+			$simil(x,y) = \frac{\sum\limits_{i \in I_{xy}}r_{x,i}r_{y,i}}{\sqrt{\sum\limits_{i \in I_{xy}}r_{x,i}^2}\sqrt{\sum\limits_{i \in I_{xy}}r_{y,i}^2}}$
+		\end{center}
+		where $I_{xy}$ is the set of movies rated by both users x and y.\\\\
+		While both of these are memory based approaches, we might also go for model based approaches. The similarity functions can be used to find similarity between both users and movies. The final recommeder system will handle 2 tasks:
+		\begin{itemize}
+			\item Recommendation: Will the user like a movie? This can either be given as a confidence measure or as a simple yes or no answer by keeping a threshold on the confidence measure. For this, we will first find out some N similar users to our new user using user attributes if the user is completely new or using user attributes and past history if he has rated some movies. Based on this we will recommend a movie.
+			\item Prediction: If the user will view a movie, what rating will he give to it? This will be a number from 1 to 5. This will also take into account ratings the user has given to similar movies.
+		\end{itemize}
+
+	\bibliographystyle{amsplain}
+	\bibliography{references}
+\end{document}
