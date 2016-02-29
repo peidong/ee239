@@ -13,14 +13,12 @@ end
 Wmat = zeros(943,1682);
 Wmat(find(Rmat > 0)) = 1;
 
+% When Rmat[i][j] == 0, tempRmat[i][j] = nan
 tempRmat = Rmat;
 tempRmat(find(Rmat == 0)) = nan;% NAN : Not A Number
 
-%Rmat_dup = Rmat;
-%Rmat_dup(isnan(Rmat)) = 0;
-
 option = struct();
-option.dis = false;
+option.dis = false;% not display Information
 
 k = [10,50,100];
 
