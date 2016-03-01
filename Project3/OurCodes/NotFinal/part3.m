@@ -13,8 +13,8 @@ option = struct();
 option.dis = false;
 
 
-index = randperm(100000);
-steps = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
+random_vector = randperm(100000);
+start_index = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
 
 pr_part1 = zeros(10,24,3);
 rec_part1 = zeros(10,24,3);
@@ -32,15 +32,15 @@ k = [10,50,100];
 
 for itr=1:length(k)
 
-    for cross_validate = 1:10
+    for k_cross_validate = 1:10
 
         Rmat_part2 = Rmat;
         Rmat_part1 = Rmat;
 
-        for st = steps(cross_validate):steps(cross_validate)+10000-1
-            ind = index(st);
-            Rmat_part2(u(ind,1),u(ind,2)) = nan;
-            Rmat_part1(u(ind,1),u(ind,2)) = nan;
+        for index_vector = start_index(k_cross_validate):start_index(k_cross_validate)+10000-1
+            random_index_vector = random_vector(index_vector);
+            Rmat_part2(u(random_index_vector,1),u(random_index_vector,2)) = nan;
+            Rmat_part1(u(random_index_vector,1),u(random_index_vector,2)) = nan;
         end
 
         [U_1,V_1] = wnmfrule(Rmat_part1,k(itr),option);
@@ -54,10 +54,10 @@ for itr=1:length(k)
 
             gt = [];
             dt = [];
-            for st = steps(cross_validate):steps(cross_validate)+10000-1
-                ind = index(st);
-                i = u(ind,1);
-                j = u(ind,2);
+            for index_vector = start_index(k_cross_validate):start_index(k_cross_validate)+10000-1
+                random_index_vector = random_vector(index_vector);
+                i = u(random_index_vector,1);
+                j = u(random_index_vector,2);
                 gt = [gt Rmat_thresholded(i,j)];
                 dt = [dt UV_1_thresholded(i,j)];
             end
@@ -69,8 +69,8 @@ for itr=1:length(k)
             fp = length(find(temp1 == 2));
             fn = length(find(temp1 == -2));
 
-            pr_part1(cross_validate,th,itr) = tp/(tp+fp);
-            rec_part1(cross_validate,th,itr) = tp/(tp+fn);
+            pr_part1(k_cross_validate,th,itr) = tp/(tp+fp);
+            rec_part1(k_cross_validate,th,itr) = tp/(tp+fn);
             th = th+1;
 
         end

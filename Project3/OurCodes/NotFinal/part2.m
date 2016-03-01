@@ -6,8 +6,8 @@ for i=1:100000
     Rmat(u(i,1),u(i,2)) = u(i,3);
 end
 
-Wmat = zeros(943,1682);
-Wmat(find(Rmat > 0)) = 1;
+w = zeros(943,1682);
+w(find(Rmat > 0)) = 1;
 
 option = struct();
 option.dis = false;
@@ -55,7 +55,7 @@ for itr=1:length(k)
             random_index_vector = random_vector(index_vector);
             i = u(random_index_vector,1);
             j = u(random_index_vector,2);
-            err_part2(k_cross_validate,test_ind,itr) = abs(Wmat(i,j) - UV_2(i,j));
+            err_part2(k_cross_validate,test_ind,itr) = abs(w(i,j) - UV_2(i,j));
             test_ind = test_ind + 1;
         end
 
