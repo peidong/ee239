@@ -44,28 +44,28 @@ finalFalseRate = inf(numCrossValidate,length(k),length(lambda),1682);
 for lb = 1:length(lambda)
 
     for itr=1:length(k)
-        
+
         for cross_validate = 1:10
-        
+
         tempRmat = Rmat_2;
         testRmat = ones(size(Rmat_2));
-        
+
         for st = steps(cross_validate):steps(cross_validate)+10000-1
-            ind = index(st);            
+            ind = index(st);
             tempRmat(u(ind,1),u(ind,2)) = nan;
             testRmat(u(ind,1),u(ind,2)) = nan;
-        end        
-        
-        
+        end
+
+
         [U,V] = wnmfrule_modified_part5_part2(tempRmat,k(itr),lambda(lb),option);
         UV = U*V;
-        
+
         tempW = isnan(testRmat);
         predMat = -1*inf(size(UV));
         predMat(tempW) = UV(tempW);
         testLiked = nan(size(predMat));
         testLiked(tempW) = Rmat_thresholded(tempW);
-        
+
         for user=1:numUser
             [sortedValues,sortIndex] = sort(predMat(user,:),'descend');
             maxIndex = sortIndex(1:5);
@@ -75,7 +75,7 @@ for lb = 1:length(lambda)
                     total = total+1;
                     if(Rmat_thresholded(user,maxIndex(mi)))
                         pre(user,cross_validate,itr,lb) = pre(user,cross_validate,itr,lb)+1;
-                    end                  
+                    end
                 end
             end
             if(total)
@@ -83,13 +83,13 @@ for lb = 1:length(lambda)
             else
                 pre(user,cross_validate,itr,lb) = 0;
             end
-            
+
             testLen = length(find(predMat(user,:)~=-inf));
-            
+
             hitRate = zeros(testLen,1);
             falseRate = zeros(testLen,1);
             for topL=1:testLen
-                if(~isnan(Rmat_thresholded(user,sortIndex(topL))))                    
+                if(~isnan(Rmat_thresholded(user,sortIndex(topL))))
                     if(Rmat_thresholded(user,sortIndex(topL)))
                         hitRate(topL) = hitRate(topL)+1;
                     else
@@ -97,12 +97,12 @@ for lb = 1:length(lambda)
                     end
                 end
             end
-            
-            
+
+
             if(testLen && length(find(testLiked(user,:) == 1)) && length(find(testLiked(user,:) == 0)))
                 tempHit(user,1) = hitRate(1)/(length(find(testLiked(user,:) == 1)));
                 tempFalse(user,1) = falseRate(1)/(length(find(testLiked(user,:) == 0)));
-                
+
                 for topL = 2:testLen
                     hitRate(topL) = hitRate(topL)+hitRate(topL-1);
                     falseRate(topL) = falseRate(topL)+falseRate(topL-1);
@@ -110,25 +110,24 @@ for lb = 1:length(lambda)
                     tempFalse(user,topL) = falseRate(topL)/(length(find(testLiked(user,:) == 0)));
                 end
             end
-            
-        end 
+
+        end
         meanHit = zeros(1682,1);
         meanFalse = zeros(1682,1);
-        
+
         for movies = 1:1682
             tempp = tempHit(:,movies);
             meanHit(movies) = mean(tempp(tempp~=-1));
-            
+
             tempp = tempFalse(:,movies);
             meanFalse(movies) = mean(tempp(tempp~=-1));
         end
-        
+
         for topL = 1:testLen
             finalHitRate(cross_validate,itr,lb,topL) = meanHit(topL);
             finalFalseRate(cross_validate,itr,lb,topL) = meanFalse(topL);
         end
-        
-        end      
+
+        end
     end
 end
-
