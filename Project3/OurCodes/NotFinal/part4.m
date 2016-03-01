@@ -11,6 +11,8 @@ Wmat(find(Rmat > 0)) = 1;
 
 [num_user num_movie] = size(Rmat);
 
+% Part 1 not done
+
 lambda = [0.01,0.1,1];
 
 option = struct();
@@ -28,24 +30,23 @@ Wmat_2 = Wmat;
 err_2 = zeros(length(k),length(lambda));
 
 for lb = 1:length(lambda)
-    
+
     for itr=1:length(k)
-        
-        [U,V] = wnmfrule_modified_part5(Rmat_2,k(itr),lambda(lb),option);
+
+        [U,V] = wnmfrule_modified_part4(Rmat_2,k(itr),lambda(lb),option);
         UV = U*V;
-        
-        err(itr,lb) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2))); 
+
+        err(itr,lb) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2)));
     end
-    
+
     %%Second part
-    
+
     for itr=1:length(k)
-        
-        [U,V] = wnmfrule_modified_part5_part2(Rmat_2,k(itr),lambda(lb),option);
+
+        [U,V] = wnmfrule_modified_part4_2(Rmat_2,k(itr),lambda(lb),option);
         UV = U*V;
-        
-        
-        err_2(itr,lb) = sqrt(sum(sum(Rmat .* (Wmat - UV).^2)));        
+
+
+        err_2(itr,lb) = sqrt(sum(sum(Rmat .* (Wmat - UV).^2)));
     end
 end
-
