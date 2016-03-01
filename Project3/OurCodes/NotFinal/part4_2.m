@@ -33,7 +33,7 @@ for lb = 1:length(lambda)
 
     for itr=1:length(k)
 
-        [U,V] = wnmfrule_modified_part4(Rmat_2,k(itr),lambda(lb),option);
+        [U,V] = wnmfrule_modified_part4_2(Rmat_2,k(itr),lambda(lb),option);
         UV = U*V;
 
         err(itr,lb) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2)));
@@ -43,9 +43,8 @@ for lb = 1:length(lambda)
 
     for itr=1:length(k)
 
-        [U,V] = wnmfrule_modified_part4_2(Rmat_2,k(itr),lambda(lb),option);
+        [U,V] = wnmfrule_modified_part4_3(Rmat_2,k(itr),lambda(lb),option);
         UV = U*V;
-
 
         err_2(itr,lb) = sqrt(sum(sum(Rmat .* (Wmat - UV).^2)));
     end

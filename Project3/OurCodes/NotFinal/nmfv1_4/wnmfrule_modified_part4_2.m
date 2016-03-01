@@ -1,4 +1,4 @@
-function [A,Y,numIter,tElapsed,finalResidual]=wnmfrule_modified_part5_part2(X,k,lambda,option)
+function [A,Y,numIter,tElapsed,finalResidual]=wnmfrule_modified_part5(X,k,lambda,option)
 % Weighted NMF based on multiple update rules for missing values: X=AY, s.t. A,Y>=0.
 % Definition:
 %     [A,Y,numIter,tElapsed,finalResidual]=wnmfrule(X,k)
@@ -62,10 +62,6 @@ end
 W=isnan(X);
 X(W)=0;
 W=~W;
-
-temp = W;
-W = X;
-X = temp;
 
 % iter: number of iterations
 [r,c]=size(X); % c is # of samples, r is # of features
