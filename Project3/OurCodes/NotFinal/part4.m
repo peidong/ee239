@@ -9,77 +9,43 @@ end
 Wmat = zeros(943,1682);
 Wmat(find(Rmat > 0)) = 1;
 
+[num_user num_movie] = size(Rmat);
+
+lambda = [0.01,0.1,1];
+
 option = struct();
-option.dis = false;
+option.dis = true;
 
-
-index = randperm(100000);
-steps = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
-
-pr_part1 = zeros(10,24,3);
-rec_part1 = zeros(10,24,3);
-pr_part2 = zeros(10,24,3);
-rec_part2 = zeros(10,24,3);
-
-Rmat_thresholded = Rmat;
-Rmat_thresholded(find(Rmat <= 3)) = -1;
-Rmat_thresholded(find(Rmat > 3)) = 1;
-
-Rmat_thresholded_2 = Wmat;
-Rmat_thresholded_2(find(Wmat == 0)) = -1;
 
 k = [10,50,100];
 
-for itr=1:length(k)
+err = zeros(length(k),length(lambda));
+
+Rmat_2 = Rmat;
+Rmat_2(find(Rmat == 0)) = nan;
+Wmat_2 = Wmat;
+
+err_2 = zeros(length(k),length(lambda));
+
+for lb = 1:length(lambda)
     
-    for cross_validate = 1:10
+    for itr=1:length(k)
         
-        Rmat_part2 = Rmat;
-        Rmat_part1 = Rmat;
+        [U,V] = wnmfrule_modified_part5(Rmat_2,k(itr),lambda(lb),option);
+        UV = U*V;
         
-        for st = steps(cross_validate):steps(cross_validate)+10000-1
-            ind = index(st);
-            Rmat_part2(u(ind,1),u(ind,2)) = nan;
-            Rmat_part1(u(ind,1),u(ind,2)) = nan;
-        end        
+        err(itr,lb) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2))); 
+    end
+    
+    %%Second part
+    
+    for itr=1:length(k)
         
-        [U_1,V_1] = wnmfrule(Rmat_part1,k(itr),option);
-        UV_1 = U_1*V_1;
+        [U,V] = wnmfrule_modified_part5_part2(Rmat_2,k(itr),lambda(lb),option);
+        UV = U*V;
         
-        th = 1;
-        for thresh = 0.2:0.2:4.8
-            UV_1_thresholded = UV_1;
-            UV_1_thresholded(find(UV_1 <= thresh)) = -1;
-            UV_1_thresholded(find(UV_1 > thresh)) = 1;
-            
-            gt = [];
-            dt = [];
-            for st = steps(cross_validate):steps(cross_validate)+10000-1
-                ind = index(st);
-                i = u(ind,1);
-                j = u(ind,2);
-                gt = [gt Rmat_thresholded(i,j)];
-                dt = [dt UV_1_thresholded(i,j)];
-            end
-            
-            temp1 = dt-gt;
-            temp2 = dt+gt;
-            tp = length(find(temp2 == 2));
-            tn = length(find(temp2 == -2));
-            fp = length(find(temp1 == 2));
-            fn = length(find(temp1 == -2));
-            
-            pr_part1(cross_validate,th,itr) = tp/(tp+fp);
-            rec_part1(cross_validate,th,itr) = tp/(tp+fn);
-            th = th+1;
-                      
-        end
         
+        err_2(itr,lb) = sqrt(sum(sum(Rmat .* (Wmat - UV).^2)));        
     end
 end
 
-mean_pr = mean(pr_part1,1);
-mean_rec = mean(rec_part1,1);
-mean_pr_2 = mean(pr_part2,1);
-mean_rec_2 = mean(rec_part2,1);
-save('part4_full.mat');
