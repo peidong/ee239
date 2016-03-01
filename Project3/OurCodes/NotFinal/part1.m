@@ -19,8 +19,6 @@ k = [10,50,100];
 % LSE : Least Square Error
 LSE = zeros(length(k),1);
 finalResidual = zeros(length(k),1);
-for itr=1:length(k)
-    [U,V,numIter,tElapsed,finalResidual(itr)] = wnmfrule(tempRmat,k(itr));
-    UV = U*V;
-    LSE(itr) = sqrt(sum(sum((w .* (Rmat - UV)).^2)));
+for i=1:length(k)
+    [U,V,numIter,tElapsed,finalResidual(i)] = wnmfrule(tempRmat,k(i));
 end
