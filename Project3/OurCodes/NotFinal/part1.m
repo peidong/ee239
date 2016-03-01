@@ -21,6 +21,6 @@ LSE = zeros(length(k),1);
 finalResidual = zeros(length(k),1);
 for itr=1:length(k)
     [U,V,numIter,tElapsed,finalResidual(itr)] = wnmfrule(tempRmat,k(itr));
-    %UV = U*V;
-    %LSE(itr) = sqrt(sum(sum((w .* (Rmat - UV)).^2)));
+    UV = U*V;
+    LSE(itr) = sqrt(sum(sum((w .* (Rmat - UV)).^2)));
 end
