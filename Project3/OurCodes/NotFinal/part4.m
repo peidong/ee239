@@ -9,17 +9,36 @@ end
 Wmat = zeros(943,1682);
 Wmat(find(Rmat > 0)) = 1;
 
-[num_user num_movie] = size(Rmat);
+% First part
 
-% Part 1 not done
+tempRmat = Rmat;
+tempRmat(find(Rmat == 0)) = nan;
+
+option = struct();
+option.dis = false;
+
+k = [10,50,100];
+LSE = zeros(length(k),1);
+LSE2 = zeros(length(k),1);
+finalResidual = zeros(length(k),1);
+
+for itr=1:length(k)
+
+    [U,V,numIter,tElapsed,finalResidual(itr)] = wnmfrule_modified_part4_1(tempRmat,k(itr),option);
+    UV = U*V;
+
+    LSE(itr) = sqrt(sum(sum((Rmat .* (Wmat - UV)).^2)))
+    LSE2(itr) = sqrt(sum(sum(Rmat .* (Wmat - UV).^2)))
+
+end
+
+% Second part
+
+[num_user num_movie] = size(Rmat);
 
 lambda = [0.01,0.1,1];
 
-option = struct();
 option.dis = true;
-
-
-k = [10,50,100];
 
 err = zeros(length(k),length(lambda));
 
@@ -39,7 +58,7 @@ for lb = 1:length(lambda)
         err(itr,lb) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2)));
     end
 
-    %%Second part
+    % Third part
 
     for itr=1:length(k)
 
