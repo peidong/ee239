@@ -12,9 +12,6 @@ Wmat(find(Rmat > 0)) = 1;
 tempRmat = Rmat;
 tempRmat(find(Rmat == 0)) = nan;
 
-%Rmat_dup = Rmat;
-%Rmat_dup(isnan(Rmat)) = 0;
-
 option = struct();
 option.dis = false;
 
