@@ -5,30 +5,22 @@ load ./ml-100k/u.data;
 addpath ./nmfv1_4;
 
 Rmat = zeros(943,1682);
-for i=1:100000
+for i=1:length(u)
     Rmat(u(i,1),u(i,2)) = u(i,3);
 end
+% set  weight matrix
+w = zeros(943,1682);
+w(find(Rmat > 0)) = 1;
 
-% Wmat : weight matrix
-Wmat = zeros(943,1682);
-Wmat(find(Rmat > 0)) = 1;
-
-% When Rmat[i][j] == 0, tempRmat[i][j] = nan
 tempRmat = Rmat;
-tempRmat(find(Rmat == 0)) = nan;% NAN : Not A Number
-
-option = struct();
-option.dis = false;% not display Information
-
+tempRmat(find(Rmat == 0)) = NaN;
 k = [10,50,100];
 
 % LSE : Least Square Error
 LSE = zeros(length(k),1);
 finalResidual = zeros(length(k),1);
 for itr=1:length(k)
-
-    [U,V,numIter,tElapsed,finalResidual(itr)] = wnmfrule(tempRmat,k(itr),option);
-    UV = U*V;
-
-    LSE(itr) = sqrt(sum(sum((Wmat .* (Rmat - UV)).^2)));
+    [U,V,numIter,tElapsed,finalResidual(itr)] = wnmfrule(tempRmat,k(itr));
+    %UV = U*V;
+    %LSE(itr) = sqrt(sum(sum((w .* (Rmat - UV)).^2)));
 end
