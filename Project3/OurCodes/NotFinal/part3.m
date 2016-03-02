@@ -17,15 +17,10 @@ start_index = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
 
 precision_part1 = zeros(10,24,3);
 recall_part1 = zeros(10,24,3);
-precision_part2 = zeros(10,24,3);
-recall_part2 = zeros(10,24,3);
 
 Rmat_thresholded = Rmat;
 Rmat_thresholded(find(Rmat <= 3)) = -1;
 Rmat_thresholded(find(Rmat > 3)) = 1;
-
-% Rmat_thresholded_2 = Wmat;
-% Rmat_thresholded_2(find(Wmat == 0)) = -1;
 
 k = [10,50,100];
 
@@ -33,12 +28,10 @@ for itr=1:length(k)
 
     for k_cross_validate = 1:10
 
-        Rmat_part2 = Rmat;
         Rmat_part1 = Rmat;
 
         for index_vector = start_index(k_cross_validate):start_index(k_cross_validate)+10000-1
             random_index_vector = random_vector(index_vector);
-            Rmat_part2(u(random_index_vector,1),u(random_index_vector,2)) = nan;
             Rmat_part1(u(random_index_vector,1),u(random_index_vector,2)) = nan;
         end
 
@@ -76,9 +69,6 @@ for itr=1:length(k)
 
     end
 end
-
 mean_precision = mean(precision_part1,1);
 mean_recall = mean(recall_part1,1);
-mean_precision_2 = mean(precision_part2,1);
-mean_recall_2 = mean(recall_part2,1);
 save('part3_full.mat');
