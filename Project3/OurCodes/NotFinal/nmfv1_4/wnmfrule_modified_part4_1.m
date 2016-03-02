@@ -37,6 +37,8 @@ else
 end
 
 % Weight
+% X is the matrix with ratings and 0.
+% W is the matrix with 0 and 1.
 W=isnan(X);
 X(W)=0;
 W=~W;

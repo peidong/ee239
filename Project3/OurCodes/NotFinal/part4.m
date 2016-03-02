@@ -10,6 +10,7 @@ Wmat = zeros(943,1682);
 Wmat(find(Rmat > 0)) = 1;
 
 % First part
+% In the First part, we need to swap the value between Rmat and Wmat. This has been down in wnmfrule_modified_part4_1.m.
 
 tempRmat = Rmat;
 tempRmat(find(Rmat == 0)) = nan;
