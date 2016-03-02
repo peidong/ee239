@@ -1,9 +1,0 @@
-===========================================
-alpha = 0.100000 
-Ridge Model: The average RMSE is 4.791298
-===========================================
-alpha = 0.010000 
-Ridge Model: The average RMSE is 9.586534
-===========================================
-alpha = 0.001000 
-Ridge Model: The average RMSE is 14.382500
