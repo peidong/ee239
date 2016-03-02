@@ -15,17 +15,17 @@ option.dis = false;
 random_vector = randperm(100000);
 start_index = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
 
-pr_part1 = zeros(10,24,3);
-rec_part1 = zeros(10,24,3);
-pr_part2 = zeros(10,24,3);
-rec_part2 = zeros(10,24,3);
+precision_part1 = zeros(10,24,3);
+recall_part1 = zeros(10,24,3);
+precision_part2 = zeros(10,24,3);
+recall_part2 = zeros(10,24,3);
 
 Rmat_thresholded = Rmat;
 Rmat_thresholded(find(Rmat <= 3)) = -1;
 Rmat_thresholded(find(Rmat > 3)) = 1;
 
-Rmat_thresholded_2 = Wmat;
-Rmat_thresholded_2(find(Wmat == 0)) = -1;
+% Rmat_thresholded_2 = Wmat;
+% Rmat_thresholded_2(find(Wmat == 0)) = -1;
 
 k = [10,50,100];
 
@@ -46,10 +46,10 @@ for itr=1:length(k)
         UV_1 = U_1*V_1;
 
         th = 1;
-        for thresh = 0.2:0.2:4.8
+        for index_threshold = 0.2:0.2:4.8
             UV_1_thresholded = UV_1;
-            UV_1_thresholded(find(UV_1 <= thresh)) = -1;
-            UV_1_thresholded(find(UV_1 > thresh)) = 1;
+            UV_1_thresholded(find(UV_1 <= index_threshold)) = -1;
+            UV_1_thresholded(find(UV_1 > index_threshold)) = 1;
 
             gt = [];
             dt = [];
@@ -68,8 +68,8 @@ for itr=1:length(k)
             fp = length(find(temp1 == 2));
             fn = length(find(temp1 == -2));
 
-            pr_part1(k_cross_validate,th,itr) = tp/(tp+fp);
-            rec_part1(k_cross_validate,th,itr) = tp/(tp+fn);
+            precision_part1(k_cross_validate,th,itr) = tp/(tp+fp);
+            recall_part1(k_cross_validate,th,itr) = tp/(tp+fn);
             th = th+1;
 
         end
@@ -77,8 +77,8 @@ for itr=1:length(k)
     end
 end
 
-mean_pr = mean(pr_part1,1);
-mean_rec = mean(rec_part1,1);
-mean_pr_2 = mean(pr_part2,1);
-mean_rec_2 = mean(rec_part2,1);
+mean_precision = mean(precision_part1,1);
+mean_recall = mean(recall_part1,1);
+mean_precision_2 = mean(precision_part2,1);
+mean_recall_2 = mean(recall_part2,1);
 save('part3_full.mat');
