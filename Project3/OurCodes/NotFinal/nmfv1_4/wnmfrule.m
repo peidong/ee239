@@ -11,10 +11,10 @@ function [A,Y,numIter,tElapsed,finalResidual]=wnmfrule(X,k,option)
 %    'ls': the Euclidean distance (defalut),
 %    'kl': KL divergence.
 % option.iter: max number of interations. The default is 1000.
-% option.dis: boolen scalar, It could be 
+% option.dis: boolen scalar, It could be
 %     false: not display information,
 %     true: display (default).
-% option.residual: the threshold of the fitting residual to terminate. 
+% option.residual: the threshold of the fitting residual to terminate.
 %    If the ||X-XfitThis||<=option.residual, then halt. The default is 1e-4.
 % option.tof: if ||XfitPrevious-XfitThis||<=option.tof, then halt. The default is 1e-4.
 % A: matrix, the basis matrix.

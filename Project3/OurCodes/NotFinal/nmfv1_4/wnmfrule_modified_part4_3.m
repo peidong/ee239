@@ -11,10 +11,10 @@ function [A,Y,numIter,tElapsed,finalResidual]=wnmfrule_modified_part4_3(X,k,lamb
 %    'ls': the Euclidean distance (defalut),
 %    'kl': KL divergence.
 % option.iter: max number of interations. The default is 1000.
-% option.dis: boolen scalar, It could be 
+% option.dis: boolen scalar, It could be
 %     false: not display information,
 %     true: display (default).
-% option.residual: the threshold of the fitting residual to terminate. 
+% option.residual: the threshold of the fitting residual to terminate.
 %    If the ||X-XfitThis||<=option.residual, then halt. The default is 1e-4.
 % option.tof: if ||XfitPrevious-XfitThis||<=option.tof, then halt. The default is 1e-4.
 % A: matrix, the basis matrix.
@@ -41,10 +41,11 @@ W=isnan(X);
 X(W)=0;
 W=~W;
 
-temp = W;
+% Swap the value between W and X
+tmp_swap = W;
 W = X;
-X = temp;
-
+X = tmp_swap;
+% End
 % iter: number of iterations
 [r,c]=size(X); % c is # of samples, r is # of features
 Y=rand(k,c);
@@ -54,29 +55,17 @@ A=X/Y;
 % A(A<eps)=0;
 A=max(A,eps);
 XfitPrevious=Inf;
-
 for i=1:option.iter
     switch option.distance
         case 'ls'
-           A=A.*(((W.*X)*Y')./(lambda*A + (W.*(A*Y))*Y'));
+            % Add lambda
+            A=A.*(((W.*X)*Y')./(lambda*A + (W.*(A*Y))*Y'));
             A(A<eps)=0;
-               A=max(A,eps);
-           Y=Y.*((A'*(W.*X))./(lambda*Y + A'*(W.*(A*Y))));
+            A=max(A,eps);
+            Y=Y.*((A'*(W.*X))./(lambda*Y + A'*(W.*(A*Y))));
             Y(Y<eps)=0;
-               Y=max(Y,eps);
-% %             Yt = Y';
-% %            
-% %             for iter=1:r
-% %                 A(iter,:) = (idm/((Y*Cu(:,:,iter)*Yt) + idmatrix)) * Y * Cu(:,:,iter) * Xt(:,iter);
-% %             end
-% %             A=max(A,eps);
-% %             
-% %             At = A';
-% %             for iter=1:c
-% %                 Y(:,iter) = (idm/((At*Ci(:,:,iter)*A) + idmatrix)) * At * Ci(:,:,iter) * X(:,iter);
-% %             end
-% %             Y=max(Y,eps);
-
+            Y=max(Y,eps);
+            % End
         case 'kl'
             A=(A./(W*Y')) .* ( ((W.*X)./(A*Y))*Y');
             A=max(A,eps);
@@ -85,7 +74,6 @@ for i=1:option.iter
         otherwise
             error('Please select the correct distance: option.distance=''ls''; or option.distance=''kl'';');
     end
-    
     if mod(i,10)==0 || i==option.iter
         if option.dis
             disp(['Iterating >>>>>> ', num2str(i),'th']);
@@ -93,8 +81,9 @@ for i=1:option.iter
         XfitThis=A*Y;
         fitRes=matrixNorm(W.*(XfitPrevious-XfitThis));
         XfitPrevious=XfitThis;
-        %curRes=norm(W.*(X-XfitThis),'fro');
+        % Add lambda
         curRes = sqrt(sum(sum(W.*(X-XfitThis).^2)) + lambda.*(sum(sum(A.^2)) + sum(sum(Y.^2))));
+        % End
         if option.tof>=fitRes || option.residual>=curRes || i==option.iter
             s=sprintf('Mutiple update rules based NMF successes! \n # of iterations is %0.0d. \n The final residual is %0.4d.',i,curRes);
             disp(s);

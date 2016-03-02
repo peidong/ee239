@@ -1,4 +1,4 @@
-% The full u data set, 100000 ratings by 943 users on 1682 items.
+% The full u data set,including 100000 ratings by 943 users on 1682 items(movies).
 % user id | item id | rating | timestamp
 % u is the matrix 100000x4
 load ./ml-100k/u.data;

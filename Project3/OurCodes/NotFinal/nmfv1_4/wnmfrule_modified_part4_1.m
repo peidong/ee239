@@ -41,10 +41,11 @@ W=isnan(X);
 X(W)=0;
 W=~W;
 
-temp = W;
+% Swap the value of W and X
+tmp_swap = W;
 W = X;
-X = temp;
-
+X = tmp_swap;
+% End
 % iter: number of iterations
 [r,c]=size(X); % c is # of samples, r is # of features
 Y=rand(k,c);
