@@ -35,7 +35,7 @@ for itr=1:length(k)
         for vector_index = 1:10000
             random_index_vector = random_vector(vector_index+(k_cross_validate-1)*10000);
             errL(k_cross_validate,test_ind,itr) = abs(Rmat(u(random_index_vector,1),u(random_index_vector,2)) - UV(u(random_index_vector,1),u(random_index_vector,2)));
-            error = error+abs(Rmat(u(random_index_vector,1),u(random_index_vector,2)) - UV(i,j));
+            error = error+abs(Rmat(u(random_index_vector,1),u(random_index_vector,2)) - UV(u(random_index_vector,1),u(random_index_vector,2)));
             test_ind = test_ind + 1;
         end
         error_average = error/10000;
