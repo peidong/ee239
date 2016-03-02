@@ -12,7 +12,6 @@ Wmat(find(Rmat > 0)) = 1;
 option = struct();
 option.dis = false;
 
-
 random_vector = randperm(100000);
 start_index = [1,10001,20001,30001,40001,50001,60001,70001,80001,90001];
 
